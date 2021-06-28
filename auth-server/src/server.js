@@ -6,9 +6,10 @@ const cors = require('cors');
 const morgan = require('morgan');
 
 // Esoteric Resources
-const errorHandler = require('./error-handlers/500.js');
-const notFound = require('./error-handlers/404.js');
+const errorHandler = require('../../api-server/src/error-handlers/500.js');
+const notFound = require('../../api-server/src/error-handlers/404.js');
 const authRoutes = require('./auth/routes.js');
+const v1Routes = require('../../api-server/src/routes/v1.js');
 
 // Prepare the express app
 const app = express();
@@ -20,10 +21,15 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const logger = require('../../api-server/src/middleware/logger.js');
+
 // Routes
 app.use(authRoutes);
+app.use('/api/v1', v1Routes);
+
 
 // Catchalls
+app.use(logger);
 app.use(notFound);
 app.use(errorHandler);
 
